@@ -1,0 +1,123 @@
+package cn;
+import java.io.*;
+public class Byte_Stuffing {
+  public static void main(String[] args)throws IOException {
+   int i=0,x,q=0;
+   InputStreamReader isr = new InputStreamReader(System.in);
+   BufferedReader br = new BufferedReader(isr);
+   String sy="01111110",sx;
+   StringBuilder sby = new StringBuilder(sy);
+   System.out.print("ENTER THE DATA: ");
+     sx = br.readLine();
+     StringBuilder sbx = new StringBuilder(sx);
+     x = sx.length();
+      while(i+5<=x){
+           String s1 = sx.substring(i, i+5);
+           if(check(s1)){
+               sbx.insert(i+5,0);
+                i=i+6;
+           }
+           else i++;
+       }    
+      System.out.print("BIT STUFFING: ");  
+      System.out.println(sbx);
+      System.out.print("FINAL OUTPUT: ");
+      System.out.println(sby+"  "+sbx+"  "+sby);
+      System.out.println(sby.append(sbx.append(sby)));
+  }
+  private static boolean check(String s){
+      String s1 = "11111";
+      if(s.equals(s1))
+          return true;
+      else return false;      
+   }
+}
+
+*****************************Byte Stuffing***************************
+
+Client Side:
+
+package awt;
+import java.io.*; 
+import java.util.*; 
+import java.net.*; 
+public class Byte_Stuffing_Client { 
+  public static void main(String args[]) throws IOException 
+  { 
+      InetAddress ip = InetAddress.getLocalHost(); 
+      int port = 45678; 
+      Scanner sc = new Scanner(System.in); 
+      Socket s = new Socket(ip, port); 
+      DataInputStream dis = new DataInputStream(s.getInputStream()); 
+      DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+      while (true) { 
+          System.out.println("Enter the Message to be Sent : "); 
+          String data = sc.nextLine(); 
+          String res = new String(); 
+          data = 'F' + data + 'F'; 
+          for (int i = 0; i < data.length(); i++) {
+              if (data.charAt(i) == 'F' && i != 0 && i != (data.length() - 1)) 
+                  res = res + 'E' + data.charAt(i);  
+              else if (data.charAt(i) == 'E') 
+                  res = res + 'E' + data.charAt(i); 
+              else
+                  res = res + data.charAt(i); 
+          } 
+          System.out.println("The data being sent (with byte stuffed) is : " + res); 
+          dos.writeUTF(res); 
+          System.out.println("Seding Message...."); 
+          if (dis.readUTF().equals("success")) 
+              System.out.println("Thanks for the Feedback Server!!"); 
+          dos.writeUTF("bye"); 
+          break; 
+      } 
+      s.close(); 
+      dis.close(); 
+      dos.close(); 
+  } 
+} 
+
+
+
+Server Side:
+
+ package awt;
+import java.io.*; 
+import java.net.*; 
+
+public class Byte_Stuffing { 
+	public static void main(String[] args) throws IOException 
+	{ 
+		ServerSocket servsock = new ServerSocket(45678); 
+	Socket socket = servsock.accept(); 
+		DataInputStream dis = new DataInputStream(socket.getInputStream()); 
+		DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); 
+
+		while (true) { 
+			String out = new String(); 
+			String res = dis.readUTF(); 
+			System.out.println("Message Recevied...Successfully!!!"); 
+			System.out.println("The Stuffed Message is : " + res); 
+
+			for (int i = 1; i < res.length() - 1; i++) { 
+			if (res.charAt(i) == 'D' || res.charAt(i) == 'F') 
+					out = out + res.charAt(i); 
+				else if (res.charAt(i) == 'E' && res.charAt(i + 1) == 'E') { 
+					out = out + 'E'; 
+					i++; 
+				} 
+			} 
+			System.out.println("The Destuffed Message is : " + out); 
+			dos.writeUTF("success"); 
+			String ch = dis.readUTF(); 
+			if (ch.equals("bye")) { 
+				System.out.println("Messaging is over.....EXITING"); 
+				break; 
+			} 
+		} 
+		socket.close(); 
+		dis.close(); 
+		dos.close(); 
+	} 
+} 
+
